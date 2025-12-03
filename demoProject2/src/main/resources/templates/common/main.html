@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thymeleaf</title>
+</head>
+<body>
+
+	<!-- fragments test : templates 폴더 기준 -->
+	<th:block th:replace="~{fragments/header}"></th:block>
+
+
+    thymeleaf
+	
+	<h3>1. 템플릿 엔진</h3>
+	 <pre>
+	  템플릿 양식과 특정 데이터 모델에 따른 입력 자료를 합성하여
+	  결과 문서(응답 화면)를 출력하는 것
+	  -> 만들어둔 화면(html)에 데이터를 추가하여 하나의 html로 만들어서 응답
+	  (JSP도 템플릿 엔진!)
+	  <a href="https://www.thymeleaf.org">타임리프 홈페이지</a>
+	 </pre>
+	 
+	 
+	 <h3>2. Thymeleaf</h3>
+	 <pre>
+	  웹 및 독립 실행형 환경을 모두 지원하는 최신 서버 측 Java 템플릿 엔진
+	  -> 웹 실행    == 요청 시 포워드 되는 화면
+	  -> 독립 실행  == html 파일만 실행(서버없이)
+	  HTML 파일에서 th(Thymeleaf) 속성을 이용해
+	  컨트롤러로 부터 전달 받은 데이터를 이용해 동적 페이지를 만들 수 있음.
+	  Spring Boot에서는 JSP가 아닌 Thymeleaf 사용을 권장하고 있음.
+	 </pre>
+
+	<ol>
+		
+	   <li>
+	     <a href="/example/ex1">타임리프 예제1</a>
+	   </li>
+	   
+	   <li>
+	     <form action="/example/ex2" method="post">
+	       <h4>타임리프 예제2</h4>
+	       이름 : <input type="text" name="inputName"> <br>
+	       나이 : <input type="number" name="inputAge"> <br>
+	       <br>
+	       색상 :
+	       Red <input type="checkbox" name="color" value="Red">
+	       Green <input type="checkbox" name="color" value="Green">
+	       Blue <input type="checkbox" name="color" value="Blue">
+	       <button>제출하기</button>
+	     </form>
+	   </li>
+	   
+	   <li>
+	     <a href="/example/ex3">타임리프 예제3</a>
+	   </li>
+	   
+	   <li>
+	     <a href="/example/ex4">타임리프 예제4</a>
+	   </li>
+	   
+	   <li>
+	     <a href="/example/ex5">타임리프 예제5</a>
+	   </li>
+	   
+	 </ol>
+
+
+
+
+
+	<hr>
+	 <h3>3. @RequestParam 어노테이션 이용
+	   - 여러개 파라미터를 컨트롤러에서 얻어오는 방법
+	 </h3>
+	 <form action="/param/test3" method="post">
+	   색상 :
+	   Red <input type="checkbox" name="color" value="Red">
+	   Green <input type="checkbox" name="color" value="Green">
+	   Blue <input type="checkbox" name="color" value="Blue">
+	   <br><br>
+	   과일 :
+	   Apple <input type="checkbox" name="fruit" value="Apple">
+	   Banana <input type="checkbox" name="fruit" value="Banana">
+	   Orange <input type="checkbox" name="fruit" value="Orange">
+	   <br><br>
+	   상품명 : <input type="text" name="productName"> <br>
+	   유통기한 : <input type="date" name="expirationDate"> <br>
+	   <button>제출하기</button>
+	 </form>
+	 <hr>
+	 <h3>4. @ModelAttribute를 이용한 파라미터 얻어오기</h3>
+	 <form action="/param/test4" method="post">
+	   ID :   <input type="text"     name="memberId"> <br>
+	   PW :   <input type="password" name="memberPw"> <br>
+	   NAME : <input type="text"     name="memberName"> <br>
+	   AGE  : <input type="number"   name="memberAge" > <br>
+	   <button>제출하기</button>
+	 </form>
+
+
+	 <th:block th:replace="~{fragments/footer :: footer1}"></th:block>
+<!-- 경로상 html 의 특정 부분만 불러오고 싶을 때-->
+
+</body>
+</html>
