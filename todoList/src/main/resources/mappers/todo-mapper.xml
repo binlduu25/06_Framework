@@ -9,4 +9,108 @@
   해당 태그는 mapper.xml 생성하자마자 삭제해야 함 
   <cache-ref namespace=""/>  
   -->
+  
+  <!-- 
+  	7-7. 태그로 sql 구문 지정 후 작성 
+  	ctrl + space 로 확인하면 insert, delete 등 sql 구문을 확인할 수 있다.
+	
+	<select> 태그 속성 
+	
+		- id 속성 : 태그를 식별하는 값 
+		  (연결된 Mapper 메서드명과 동일하게 작성하여 연결)
+	
+		- resultType 속성 : 
+		  조회 결과 한 줄(1행)을 저장하여 반환할 변수/객체 자료형을 지정
+		  조회 결과가 여러 행이면 행 별로 변수/객체 자료형으로 저장 후 모아서 List로 반환
+  -->
+  <select id="testTitle" resultType="string"> 
+  
+  <!-- 
+  	해당 부분에 select sql 구문 작성, 메소드명과 id명이 동일할 시 sql 구문 실행 
+ 	 returnType 에서 string 입력 시 String이 아님에 주의
+ 	 mybatis 수업자료 pdf 참고
+  -->
+  
+  	SELECT TODO_TITLE 
+  	FROM TB_TODO
+  	WHERE TODO_NO = 1
+  </select>
+  
+  <!-- A-6. 할 일 목록 조회 SQL -->
+  <select id="selectAll" resultType="Todo"> <!-- resultType 이 Todo임에 주의 -->
+  	SELECT TODO_NO, TODO_TITLE, COMPLETE, TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI:SS') REG_DATE
+	FROM TB_TODO
+	ORDER BY TODO_NO
+  </select>
+  
+  <!-- 완료된 할 일 갯수 조회 -->
+  <select id="getCompleteCount" resultType="_int"> <!-- '_int' 로 표기함을 주의 -->
+  	SELECT COUNT(*)
+  	FROM TB_TODO
+  	WHERE COMPLETE = 'Y'
+  </select>
+  
+  <!-- 할 일 추가 -->
+  <!-- 
+  parameterType : 전달 받은 값(전달인자)의 타입을 명시하는 속성
+  -> DTO, MAP 인 경우 필드명/key 를 입력해서 값/value 을 하나씩 꺼내서 사용 가능
+  또한 config 에서 설정을 해두었기 때문에 약식으로 작성이 가능하다(패키지 경로 전부 작성할 필요 없음)
+  + insert 의 경우 무조건 반환하는 값이 int 이기 때문에 resultType 속성은 생략'하여야' 한다
+   -->
+  <insert id="addTodo" parameterType="Todo" > 
+  	INSERT INTO TB_TODO VALUES
+  	(SEQ_TODO_NO.NEXTVAL, #{todoTitle}, #{todoContent}, DEFAULT, DEFAULT)
+  </insert>
+  
+  <!-- 
+  mapper.xml 에서 java data(파라미터)를 SQL에 삽입하는 방법! 
+  
+  1) #{변수명 | 필드명} : SQL에 삽입 시 양쪽에 '' 가 필요한 경우 삽입 ex) MEMBER_EMAIL = #{memberEmail} -> 'member01@naver.com' 
+  
+  ============================================================= 
+  
+  2) ${변수명 | 필드명} : SQL에 삽입 시 양쪽에 '' 붙이지 않고 삽입 
+  
+	 ${} 언제 사용할까? 
+	 1) 삽입할 값이 숫자인 경우 
+	 2) SQL문 자체가 변해야 하는 경우 
+	  ex) SELECT MEMBER_NAME, ${key} FROM "MEMBER" 
+	  		-> ${key}가 ENROLL_DATE 인 경우 -> SELECT MEMBER_NAME, ENROLL_DATE FROM "MEMBER" 
+	  		-> ${key}가 MEMBER_ADDRESS 인 경우 -> SELECT MEMBER_NAME, MEMBER_ADDRESS FROM "MEMBER" 
+ -->
+ 
+ <!-- resultType, parameterType 은 추론 가능하여 생략 가능하긴 하다 -->
+ <select id="todoDetail" resultType="Todo" parameterType="_int"> 
+ 	SELECT TODO_NO, TODO_TITLE, TODO_CONTENT, COMPLETE, TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI:SS') REG_DATE
+	FROM TB_TODO
+	WHERE TODO_NO = ${todoNo}
+ </select> 
+
+<!-- 할 일 삭제 -->
+<delete id="todoDelete" parameterType="_int">
+	DELETE FROM TB_TODO
+	WHERE TODO_NO = #{todoNo}
+</delete>
+  
+  <!-- 완료 여부 변경 -->
+<update id="changeComplete" parameterType="Todo">
+	UPDATE TB_TODO
+	SET COMPLETE = #{complete}
+	WHERE TODO_NO = #{todoNo}
+</update>
+ 
+<!-- 할 일 수정 -->
+ <update id="todoUpdate" parameterType="Todo">
+  	UPDATE TB_TODO
+  	SET TODO_TITLE 	 = #{todoTitle},
+  		TODO_CONTENT = #{todoContent}
+  	WHERE TODO_NO 	 = #{todoNo}
+ </update>
+
+<select id="getTotalCount"  resultType="_int">
+	SELECT COUNT(*) FROM TB_TODO
+</select>  
+  
+  
+  
 </mapper>

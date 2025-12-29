@@ -10,13 +10,15 @@
 
 <body>
   <h1>Todo List</h1>
+  
+  <h2 th:text="${testTitle}">todoNo가 1인 할 일 제목 조회</h2>
 
   <hr>
 
   <h3><a href="/ajax/main">TodoList - Ajax 버전 페이지로...</a></h3>
 
 
-  <p>todoNo가 1인 할 일 제목 조회</p>
+  <p>(TEST)todoNo가 1인 할 일 제목 조회</p>
 
   <form action="/todo/add" method="post">
     <h4>할 일 추가</h4>
@@ -32,7 +34,7 @@
   <hr>
 
  
-  <h3>전체 Todo 개수/완료된 Todo 개수 내용
+  <h3 th:text="|전체 Todo 개수 : ${#lists.size(todoList)}개 / 완료된 Todo 개수 : ${completeCount}개|">전체 Todo 개수/완료된 Todo 개수 내용
   </h3>
 
   <table border="1">
@@ -47,19 +49,35 @@
     </thead>
 
     <tbody>
-     
-      <tr >
-        <td>행 번호</td>
-        <td>할 일 번호</td>
+		<!-- 
+			반복 상테 변수 : 현재 반복중인 객체와 반복 정보를 저장 중인 타임리프 변수
+							 변수명은 자유지만 보통 iterStat 으로 작성
+							 varStatus 와 비슷
+		-->
+   
+      <tr th:each="todo, iterStat : ${todoList}" th:object="${todo}"> 	
+		<!-- 
+		todoList를 불러와 th:each로 반복문을 돌리고 하나씩 불러온 객체를 todo라는 변수명으로, todoList를 대상으로 순회하고
+		있는 모든 정보를 저장한 건 iterStat으로 등록, 그리고 해당 todo를 object로 등록해 불러오기 쉽게 함
+		-->
+        <td th:text="${iterStat.count}">행 번호</td>
+        <td th:text="*{todoNo}">할 일 번호</td> 
         <td>
-          <a>할 일 제목</a>
+          <a th:href="@{/todo/detail(todoNo=*{todoNo})}" th:text="*{todoTitle}">할 일 제목</a>
+                 
         </td>
-        <td>완료 여부(Y/N)</td>
-        <td>등록일</td>
+        <td th:text="*{complete}">완료 여부(Y/N)</td>
+        <td th:text="*{regDate}">등록일</td>
       </tr>
     </tbody>
   </table>
 
+<th:block th:replace="~{common/footer}"></th:block>
+<!-- 위 message 를 fragment 로 사용하는 이유는 message 가 다른 곳에서도 재활용 가능성이 있기 때문임 -->  
+<!-- 
+	평소처럼 <script src 를 통해 js 를 불러오지 않는 이유 
+	thymeleaf 통해 js를 작성했기 때문
+-->
 
 </body>
 
