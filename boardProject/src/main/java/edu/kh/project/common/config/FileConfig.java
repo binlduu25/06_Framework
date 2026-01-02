@@ -10,16 +10,14 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import edu.kh.project.board.controller.BoardController;
+
 import jakarta.servlet.MultipartConfigElement;
 
 @PropertySource("classpath:/config.properties")
 @Configuration
 public class FileConfig implements WebMvcConfigurer{
 
-    private final BoardController boardController;
 
-    
 	// WebMvcConfigurer : SpringMVC 프레임워크에서 제공하는 인터페이스 중 하나로, 스프링 구성을 커스터마이징하고 
 	// 					  확장하기 위한 메서드 제공. 주로 웹 애플리케이션의 설정을 조정하거나 추가하는 데 사용됨
 	
@@ -32,7 +30,7 @@ public class FileConfig implements WebMvcConfigurer{
 	private String location;
 	
 	// 요청 당 파일 최대 크기
-	@Value("${spring.servlet.multipart.max-request-size}")
+	@Value("${spring.servlet.multipart-max-request-size}")
 	private long maxRequestSize;
 	
 	// 개별 파일 당 최대 크기 
@@ -56,17 +54,18 @@ public class FileConfig implements WebMvcConfigurer{
 	
 	@Value("${my.board.resource-location}")
 	private String boardResourceLocation;
-
-    FileConfig(BoardController boardController) {
-        this.boardController = boardController;
-    }
 	
 	/* 아래 코드 잘못 눌러서 생긴 듯
-	
+	    private final BoardController boardController;
+
 	private final MultipartConfigElement configElement;
     
     FileConfig(MultipartConfigElement configElement) {
         this.configElement = configElement;
+    }
+    
+        FileConfig(BoardController boardController) {
+        this.boardController = boardController;
     }
     
     */

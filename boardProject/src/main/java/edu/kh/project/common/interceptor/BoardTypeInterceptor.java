@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * */
 
-
 // 참고
 // HandlerInterceptor 들어가서 메서드를 살펴보면 default 라는 접근제한자가 붙어 있다.
 // 해당 메서드를 보면 중괄호가 붙어 있고 추상메서드 형태가 아닌 것처럼 보이지만, js 버전이 올라가며 새로 생긴 방식임

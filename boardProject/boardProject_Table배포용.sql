@@ -213,6 +213,8 @@ COMMENT ON COLUMN "BOARD_LIKE"."BOARD_NO" IS '게시글 번호(PK)';
 
 --------------------------------------------------------------
 
+SELECT * FROM "BOARD_IMG";
+
 -- 게시판 이미지 테이블
 CREATE TABLE "BOARD_IMG" (
 	"IMG_NO"	NUMBER		NOT NULL,
@@ -548,27 +550,46 @@ COMMIT;
 
 ----------------------------------------------------------
 
--- SEQ_IMG_NO 시퀀스의 다음 값을 반환하는 함수 생성
+-- SEQ_IMG_NO 시퀀스의 다음 값을 반환하는 함수 생성 (게시글 작성 부분)
 
 -- 전체 드래그 ALT+X
-CREATE OR REPLACE FUNCTION NEXT_IMG_NO
--- 반환형
-RETURN NUMBER
--- 사용할 변수
-IS IMG_NO NUMBER;
-BEGIN 
+ -- DB 에서 사용할 함수임
+
+-- 만약 아래 INSERT 시행한다고 하면 오류 뜸
+-- 왜? 시퀀스는 UNION 으로 연결된 SELECT 에선 사용할 수 없기 때문
+-- 누가 먼저인지 파악할 수 없기 때문에 
+
+INSERT INTO "BOARD_IMG"
+(
+	SELECT SEQ_IMG_NO.NEXTVAL, '경로1', '원본1', '변경1', 1, 2000 FROM DUAL
+	UNION
+	SELECT SEQ_IMG_NO.NEXTVAL, '경로2', '원본2', '변경2', 1, 2000 FROM DUAL
+	UNION
+	SELECT SEQ_IMG_NO.NEXTVAL, '경로3', '원본3', '변경3', 1, 2000 FROM DUAL
+);
+
+-- 따라서!!
+-- 함수를 이용해 NEXTVAL을 발급해주는 기능이 필요함 
+-- 아래 확인
+
+CREATE OR REPLACE FUNCTION NEXT_IMG_NO -- NEXT_IMG_NO 의 함수를 생성하거나 덮어쓰겠다.
+RETURN NUMBER -- 함수의 반환형은 NUMBER 타입
+IS IMG_NO NUMBER; -- 함수에서 이용할 변수명은 IMG_NO으로 NUMBER 타입이다. 
+BEGIN -- 여기부터 함수가 하는 일(해당 함수가 호출될 때마다 BEGIN 아래 SQL 이 수행되며 IMG_NO 을 반환 
 	SELECT SEQ_IMG_NO.NEXTVAL 
 	INTO IMG_NO
 	FROM DUAL;
-
 	RETURN IMG_NO;
 END;
--- 여기까지 긁기
+-- 여기까지 ALT + X 로 실행 후
+-- 해당 함수를 게시글 작성 파트 이미지 업로드 mapper 에서 사용 
 
 SELECT NEXT_IMG_NO() FROM DUAL;
+-- 위 작성된 함수를 테스트(하나씩 늘어날 것)
+
+---------------------------------------------------------- 여기까지 완료 -----------------------------
 
 
-----------------------------------------------------------
 /* 채팅 */
 CREATE TABLE "CHATTING_ROOM" (
 	"CHATTING_ROOM_NO"	NUMBER		NOT NULL,

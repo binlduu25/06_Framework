@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.kh.project.board.model.mapper.EditBoardMapper">
+
+	<!-- 
+	게시글 작성 위한 1단계
+	먼저 게시글 제목, 내용등을 삽입하여 boardNo 도출
+	아래 SQL 로 나온 결과(boardNo)를 변수에 저장하여 2단계에서 사용 
+	-->
+	
+	<!-- 2단계
+	useGeneratedKeys 속성 : DB 내부적으로 생성한 키(시퀀스)를 전달된 파라미터의 필드로 대입 가능 여부 지정
+	
+	<selectKey> : - INSERT/UPDATE 시 사용할 키(시퀀스)를 조회하여 파라미터의 지정된 필드에 대입하는 역할의 태그
+				  - order 속성 : BEFORE/AFTER 지정 가능
+				  - keyProperty 속성 : selectKey 조회 결과 저장할 파라미터 필드명
+				  
+	
+	즉, insert 태그 내 selectKey 태그에서 BOARD_NO 의 다음 시퀀스 번호를 발행
+	순서(order)는 insert 태그 내 쿼리가 실행되기 전(BEFORE)
+	반환타입(resultType)은 _int형
+	keyProperty 는 boardNo : 이 boardNo를 insert 태그 내 속성 parameterType의 Board(게시판 객체)에 등록
+	
+	이 과정을 허용하겠다는 게 useGenerateKeys="true"
+	-->
+
+	<insert id="boardInsert" useGeneratedKeys="true" parameterType="Board">
+		
+		<selectKey order="BEFORE" resultType="_int" keyProperty="boardNo">
+			SELECT SEQ_BOARD_NO.NEXTVAL FROM DUAL
+		</selectKey>
+	
+		INSERT INTO "BOARD"
+		VALUES(#{boardNo}, #{boardTitle}, #{boardContent}, DEFAULT, DEFAULT, DEFAULT, DEFAULT, #{boardCode}, #{memberNo})
+		
+	</insert>
+	
+	
+	
+	<!-- BoardImg 로 구성된 list가 전달되어 오는데, 1행에서 5행까지 분포되어 있을 것 -->
+	<!-- 종래에 하던 것과 달리 1행씩이 아닌 여러 행을 동시에 insert 해야 함 -->
+	
+	<!-- 
+ 		동적 SQL 중 <foreach>
+ 		
+ 		- Mybatis에서 제공하는 향상된 for문으로써, 특정 SQL 구문을 반복할 때 사용
+ 		- 반복 사이에 구분자(separator)를 추가할 수 있음
+ 		
+ 		[지원하는 속성]
+ 		
+ 		collection : 반복할 객체의 타입 작성(list, set, map...)
+		item : collection에서 순차적으로 꺼낸 하나의 요소를 저장하는 변수
+		index : 현재 반복 접근중인 인덱스 (0,1,2,3,4 ..)
+		
+		open : 반복 전에 출력할 sql
+		close : 반복 종료 후에 출력한 sql
+		
+		separator : 반복 사이사이 구분자(구분자 양 옆 띄어쓰기 필수)
+		
+		>> 아래 foreach 태그를 통해 다음과 같은 형식의 sql 구문 생성
+		
+		(
+		SELECT NEXT_IMG_NO(), '경로1', '원본1', '변경1', 1, 2000 FROM DUAL
+		UNION
+		SELECT NEXT_IMG_NO(), '경로2', '원본2', '변경2', 1, 2000 FROM DUAL
+		UNION
+		SELECT NEXT_IMG_NO(), '경로1', '원본1', '변경1', 1, 2000 FROM DUAL
+		)
+		
+		** 또한 'NEXT_IMG_NO()' 함수는 DB 상 이미 생성되어 있음
+		
+ 	-->
+	
+	
+	<insert id="insertUploadList" parameterType="list">
+		INSERT INTO "BOARD_IMG"
+		
+		<foreach collection="list" item="img" open="(" close=")" separator=" UNION ">
+			SELECT NEXT_IMG_NO(), #{img.imgPath}, #{img.imgOriginalName}, #{img.imgRename}, #{img.imgOrder}, #{img.boardNo}
+			FROM DUAL
+		</foreach>
+	
+	</insert>
+
+
+</mapper>

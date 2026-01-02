@@ -34,8 +34,6 @@ public class MyPageServiceImpl implements MyPageService {
 	@Value("${my.profile.web-path}")
 	private String profileWebPath;
 	
-	
-	
 	@Value("${my.profile.folder-path}")
 	private String profileFolderPath;
 	

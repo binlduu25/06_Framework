@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpSession;
  * 
  * */
 
-// 로그인이 되어 있지 않은 경우 특정 페이지 접근 불가하도록 피렅링
+// 로그인이 되어 있지 않은 경우 특정 페이지 접근 불가하도록 필터링
 public class LoginFilter implements Filter{
 
 	// 필터 동작을 정의하는 메서드
