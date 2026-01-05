@@ -3,7 +3,9 @@ package edu.kh.project.board.model.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -132,5 +134,70 @@ public class EditBoardServiceImpl implements EditBoardService{
 		}
 		
 		return boardNo;
+	}
+	
+	/**
+	 * 게시글 수정 서비스
+	 */
+	@Override
+	public int boardUpdate(Board inputBoard, List<MultipartFile> images, String deleteOrderList) throws Exception{
+		
+		// 제목이나 내용 등은 Board 테이블에 있지만, 이미지는 Board_img 테이블에 있으므로 이를 나누어 생각해야 한다.
+		
+		// 1. 게시글 제목/내용 수정
+		
+		int result = mapper.boardUpdate(inputBoard);
+		
+		// 수정 실패 시 바로 리턴
+		if(result == 0) return 0;
+		
+		// 2. 기존 0 -> 삭제된 이미지(deleteOrderList)가 있는 경우
+		if(deleteOrderList != null && !deleteOrderList.equals("")) {
+			
+			// mapper 로 전달할 매개변수 만들기 위해 map 에 세팅
+			Map<String, Object> map = new HashMap<>();
+			map.put("deleteOrderList", deleteOrderList); // deleteOrderList 는 String으로 0,1,2 형태로 들어 있다.
+			map.put("boardNo", inputBoard.getBoardNo());
+			
+			// BOARD_IMG 에 존재하는 행을 삭제하는 SQL 호출
+			result = mapper.deleteImg(map);
+			
+			// result = 0~4 값을 가짐(boardImg)
+			 // 조금 더 service 품질을 올리기 위해서는 삭제한 img 갯수와 결과가 일치하지 않을 때를 고려하는 코드를 작성하는 것이 좋다.
+			 // 하지만 현 단계에선 x
+			
+			if(result == 0) { // 실패할 경우 rollback
+				throw new RuntimeException();
+			}
+		}
+		
+		// 3. 제출된 이미지가 있을 경우(클라이언트가 실제 업로드한 이미지가 있는 경우)
+		 // 위 boardInsert 쪽 부분 복사해서 가져옴
+		
+		List<BoardImg> uploadList = new ArrayList<>();
+		for(int i = 0; i < images.size(); i++) {
+			if(!images.get(i).isEmpty()) {
+				String originalName = images.get(i).getOriginalFilename();
+				String rename = Utility.fileRename(originalName);
+				
+				BoardImg img = BoardImg.builder()
+								.imgOriginalName(originalName)
+								.imgRename(rename)
+								.imgPath(webPath)
+								.boardNo(inputBoard.getBoardNo())
+								.imgOrder(i)
+								.uploadFile(images.get(i))
+								.build();
+				
+				uploadList.add(img);
+				
+				// 4. 업로드 하려는 이미지 정보(img) 이용하여 수정 또는 삽입 수행
+				 // 94 18:00
+			}
+		}
+		
+		
+		
+		return 0;
 	}
 }

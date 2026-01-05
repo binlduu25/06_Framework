@@ -35,8 +35,6 @@
 		
 	</insert>
 	
-	
-	
 	<!-- BoardImg 로 구성된 list가 전달되어 오는데, 1행에서 5행까지 분포되어 있을 것 -->
 	<!-- 종래에 하던 것과 달리 1행씩이 아닌 여러 행을 동시에 insert 해야 함 -->
 	
@@ -70,8 +68,7 @@
 		** 또한 'NEXT_IMG_NO()' 함수는 DB 상 이미 생성되어 있음
 		
  	-->
-	
-	
+
 	<insert id="insertUploadList" parameterType="list">
 		INSERT INTO "BOARD_IMG"
 		
@@ -81,6 +78,28 @@
 		</foreach>
 	
 	</insert>
-
-
+	
+	<!-- 게시글 수정 1. 제목/내용 수정 -->
+	<update id="boardUpdate">
+			
+		UPDATE "BOARDE" SET
+		BOARD_TITLE = #{boardTitle},
+		BOARD_CONTENT = #{boardContent}
+		WHERE
+			BOARD_CODE = #{boardCode}
+		AND BOARD_NO = #{boardNo}
+		AND MEMBER_NO = #{memberNo}
+		
+	</update>
+	
+	<!-- 게시글 삭제 -->
+	<!-- WHERE 내 IN 연산자 
+		 : WHERE ~ IN (1,2) > ~ 테이블 내 1번 또는 2번 값이 일치할 때 
+		 : #{} 사용 시 홑따옴표가 들어오기 때문에 ${} 사용한다 -->
+	<delete id="deleteImg">
+		DELETE FROM "BOARD_IMG"
+		WHERE IMG_ORDER IN	(${deleteOrderList})
+		AND BOARD_NO = #{boardNo}		
+	</delete>
+	
 </mapper>
