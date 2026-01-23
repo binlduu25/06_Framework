@@ -205,8 +205,23 @@ public class EditBoardController {
 		// 2. 게시글 수정 서비스 호출 후 결과 반환 받기
 		int result = service.boardUpdate(inputBoard, images, deleteOrderList);
 		
+		// 3. 서비스 결과에 따라 응답 제어하기
+		String message = null;
+		String path = null;
 		
-		return "redirect:";
+		if(result > 0) {
+			message = "게시글이 수정되었습니다";
+			path = String.format("/board/%d/%d?cp=%d", boardCode, boardNo, cp);
+		
+		} else {
+			message = "수정 실패";
+			path = "update"; // GET (수정화면 전환)
+			
+		}
+		
+		ra.addFlashAttribute("message", message);
+		
+		return "redirect:" + path;
 	}
 	
 	

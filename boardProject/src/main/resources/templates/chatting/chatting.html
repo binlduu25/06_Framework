@@ -33,7 +33,7 @@
 				<th:block th:each="room : ${roomList}">
 
 					<li class="chatting-item" th:chat-no="${room.chattingRoomNo}" th:target-no="${room.targetNo}">
-						<div class="item-header">
+						<div class="item-header">	
 
 							<img th:if="${room.targetProfile}" class="list-profile" th:src="${room.targetProfile}">
 

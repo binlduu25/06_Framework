@@ -161,4 +161,13 @@ public class BoardServiceImpl implements BoardService{
 		
 	}
 	
+	/**
+	 * DB에 있는 이미지 조회 서비스 (SCHEDULING 에서 사용)
+	 */
+	@Override
+	public List<String> selectDbImageList() {
+		return mapper.selectDbImageList();
+	}
+	
+	
 }

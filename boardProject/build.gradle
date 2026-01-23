@@ -23,8 +23,9 @@ configurations {
 repositories {
 	mavenCentral()
 }
-
+	
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-aop:3.5.8'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc' 
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security' // 추가

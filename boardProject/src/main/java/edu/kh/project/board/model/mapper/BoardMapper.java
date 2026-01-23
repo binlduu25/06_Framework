@@ -67,6 +67,11 @@ public interface BoardMapper {
 
 	int selectLikeCount(int boardNo);
 
+	/** DB 이미지 파일 목록명 조회
+	 * @return
+	 */
+	List<String> selectDbImageList();
+
 
 
 }

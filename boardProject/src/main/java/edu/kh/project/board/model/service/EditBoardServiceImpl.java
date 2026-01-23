@@ -174,8 +174,12 @@ public class EditBoardServiceImpl implements EditBoardService{
 		// 3. 제출된 이미지가 있을 경우(클라이언트가 실제 업로드한 이미지가 있는 경우)
 		 // 위 boardInsert 쪽 부분 복사해서 가져옴
 		
+		// 업로드된 이미지 모아둘 list 생성
 		List<BoardImg> uploadList = new ArrayList<>();
+		
 		for(int i = 0; i < images.size(); i++) {
+			
+			// 실제 파일이 제출된 경우
 			if(!images.get(i).isEmpty()) {
 				String originalName = images.get(i).getOriginalFilename();
 				String rename = Utility.fileRename(originalName);
@@ -192,12 +196,36 @@ public class EditBoardServiceImpl implements EditBoardService{
 				uploadList.add(img);
 				
 				// 4. 업로드 하려는 이미지 정보(img) 이용하여 수정 또는 삽입 수행
-				 // 94 18:00
+				
+				// 1) 기존 0 -> 새 이미지로 변경 -> 수정
+				result = mapper.updateImage(img);
+				
+				if(result == 0) {
+					// 수정 실패 == 기존 해당 순서(IMG_ORDER)에 이미지가 없었음
+					// > 삽입 수행
+					
+					// 2) 기존 X -> 새 이미지 추가
+					result = mapper.insertImage(img);	
+				}
+		
+			}
+			
+			// 수정 또는 삽입이 실패한 경우
+			if(result == 0) {
+				throw new RuntimeException(); // 롤백
 			}
 		}
 		
+		// 선택한 파일이 없는 경우
+		if(uploadList.isEmpty()) {
+			return result;
+		}
 		
+		// 수정, 새 이미지 파일 서버에 저장
+		for(BoardImg img : uploadList) {
+			img.getUploadFile().transferTo(new File(folderPath + img.getImgRename()));
+		}
 		
-		return 0;
+		return result;
 	}
 }

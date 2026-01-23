@@ -88,7 +88,7 @@ targetInput.addEventListener("input", e => {
 });
 
 
-// 채팅방 입장 또는 선택 함수
+// 새 채팅방 입장 또는 기존 채팅방을 선택하는 함수
 function chattingEnter(e){
 
 	console.log(e.target); // 실제 클릭된 요소

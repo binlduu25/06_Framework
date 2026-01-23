@@ -35,4 +35,16 @@ public interface EditBoardMapper {
 	 */
 	int deleteImg(Map<String, Object> map);
 
+	/** 게시글 이미지 수정 SQL
+	 * @param img
+	 * @return
+	 */
+	int updateImage(BoardImg img);
+
+	/** 게시글 이미지 삽입 SQL
+	 * @param img
+	 * @return
+	 */
+	int insertImage(BoardImg img);
+
 }

@@ -307,5 +307,21 @@
   	WHERE BOARD_NO = #{boardNo}
   </select>
   
+  <!-- scheduling -->
+  
+<!-- 조회 결과로 INSTR(PROFILE_IMG, '/', -1) : PROFILE_IMG 컬럼에서 /를 구분자로 -1(뒤에서)부터 찾아 잘라낸 숫자 반환 -->
+<!-- SUBSTR : 조회 결과를 앞에서부터 (숫자)만큼 잘라 반환 -->
+<!-- UNION 시 조회하려하는 두 테이블의 각 컬럼값의 데이터가 일치하지 않으면 에러가 발생하기에 통일시켜준다 > CAST -->
+<select id="selectDbImageList">
+	SELECT SUBSTR(PROFILE_IMG, INSTR(PROFILE_IMG, '/', -1) +1 ) "rename" 
+	FROM "MEMBER"
+	
+	UNION
+	
+	SELECT CAST(IMG_RENAME AS VARCHAR2(300)) "rename"
+	FROM "BOARD_IMG"
+</select>
+  
+  
   
 </mapper>
