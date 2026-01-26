@@ -8,12 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import edu.kh.project.chatting.model.dto.ChattingRoom;
+import edu.kh.project.chatting.model.dto.Message;
 import edu.kh.project.chatting.model.service.ChattingService;
 import edu.kh.project.member.dto.Member;
 import lombok.extern.slf4j.Slf4j;
@@ -86,5 +89,41 @@ public class ChattingController {
 		return service.selectRoomList(loginMember.getMemberNo());
 		
 	}
+	
+	// 메시지 목록 조회 - 비동기
+	@GetMapping("selectMessage")
+	@ResponseBody
+	public List<Message> selectMessageList(@RequestParam Map<String, Object> paramMap){
+		return service.selectMessageList(paramMap);
+		
+		// *** @RequestParam을 이용한 Map 사용시 K,V 무조건 String ***
+		// -> 컴파일 오류가 없어도 형변환 불가하여 오류 발생
+		
+		//log.debug("test : {}", paramMap.get("chattingRoomNo").getClass());
+		// -> class java.lang.String
+		
+		//int chattingRoomNo = Integer.parseInt(paramMap.get("chattingRoomNo"));
+		// 형변환 불가 : 바인딩 충돌 관련 오류 때문에
+		// Integer.parseInt() 은 무조건 String 을 원함
+		// -> 하지만 paramMap.get("chattingRoomNo") 은 
+		// 컴파일 시 Integer / 런타임시 String형임
+		
+		// 무조건 형변환하고싶다면 아래처럼 가능하긴함
+		// int chattingRoomNo 
+		// 		= Integer.parseInt(String.valueOf(paramMap.get("chattingRoomNo")));
+		
+	}
+	
+	
+	/** 채팅 읽음 표시 메서드 - 비동기
+	 * @return
+	 */
+	@PutMapping("updateReadFlag")
+	@ResponseBody
+	public int updateReadFlag(@RequestBody Map<String, Object> paramMap) {
+		return service.updateReadFlag(paramMap);
+	}
+	
+	
 	
 }

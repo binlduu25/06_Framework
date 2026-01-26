@@ -45,5 +45,8 @@ public class Board {
 	// 게시글에 등록된 댓글 목록
 	private List<Comment> commentList;
 	
+	// REACT 관리자 페이지에서 추가한 BOARD_NAME DTO
+	private String boardName;
+	
 	
 }

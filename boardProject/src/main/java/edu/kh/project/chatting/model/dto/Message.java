@@ -18,4 +18,6 @@ public class Message {
 	private int chattingRoomNo; // 채팅방 번호
 	private String sendTime; // 메시지 발송 시간
 	
+	private int targetNo; // 웹소켓 이용한 메시지 값 세팅 시 필요
+	
 }

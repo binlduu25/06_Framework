@@ -3,12 +3,12 @@ package edu.kh.project.chatting.model.service;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.project.chatting.model.dto.ChattingRoom;
+import edu.kh.project.chatting.model.dto.Message;
 import edu.kh.project.chatting.model.mapper.ChattingMapper;
 import edu.kh.project.member.dto.Member;
 
@@ -58,5 +58,39 @@ public class ChattingServiceImpl implements ChattingService{
 		
 		return 0;
 	}
+	
+	
+	/**
+	 * 채팅 메시지 조회 서비스
+	 */
+	@Override
+	public List<Message> selectMessageList(Map<String, Object> paramMap) {
+		
+		List<Message> messageList = mapper.selectMessageList(paramMap.get("chattingRoomNo"));
+		
+		if(!messageList.isEmpty()) { // 해당 채팅방에 나눈 메시지가 있다면
+			int result = mapper.updateReadFlag(paramMap); // 메시지 모두 읽음처리
+			
+		}
+		
+		return messageList;
+	}
 
+	
+	/**
+	 * 채팅 읽음 표시 업데이트
+	 */
+	@Override
+	public int updateReadFlag(Map<String, Object> paramMap) {
+		return mapper.updateReadFlag(paramMap);
+	}
+	
+	/**
+	 * 채팅 입력 서비스
+	 */
+	@Override
+	public int insertMessage(Message msg) {
+		return mapper.insertMessage(msg);
+	}
+	
 }

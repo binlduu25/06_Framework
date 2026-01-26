@@ -1,5 +1,6 @@
 package edu.kh.project.common.util;
 
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -7,6 +8,10 @@ import java.util.Date;
  // 메서드는 static으로 작성
 
 public class Utility {
+	
+	// 관리자 계정 생성 시 비밀번호 난수 생성 관련 필드
+	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	private static final int CODE_LENGTH = 6;
 	
 	// Sequence 번호로 쓸 필드 선언
 	public static int seqNum = 1; // 1 ~ 99999 반복
@@ -48,5 +53,28 @@ public class Utility {
 		//20251216135630_00001.jpg 같은 형태로 반환될 것
 	}
 	
+	// 랜덤 비밀번호 발급 메서드(관리자용)
+		public static String generatePassword() {
 
+			SecureRandom random = new SecureRandom();
+			// SecureRandom : 난수를 생성하기 위한 클래스로, 보안적으로 더 강력한 랜덤 값을 생성함.
+			// 일반적인 Random보다 예측 가능성이 낮아, 민감한 데이터(암호 생성)와 같은 곳에 적합함.
+
+			StringBuilder randomCode = new StringBuilder(CODE_LENGTH);
+			// 길이 6을 초기 용량으로 갖는 StringBuilder 객체 생성
+
+			for (int i = 0; i < CODE_LENGTH; i++) {
+				int index = random.nextInt(CHARACTERS.length()); // CHARACTERS의 길이(62)
+				// random.nextInt(62) 는 0부터 61사이의 난수를 생성
+
+				randomCode.append(CHARACTERS.charAt(index));
+				// CHARACTERS 문자열의 index 위치에 있는 문자를 반환
+				// ex) index가 0이면 'A' , index가 61이면 '9'를 반환
+				// 반환받은 값을 randomCode에 누적
+			}
+
+			return randomCode.toString();
+		}
+	
+	
 }
